@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { CreateHistoryDto } from './dto/create-history.dto';
 import { UpdateHistoryDto } from './dto/update-history.dto';
@@ -12,23 +12,28 @@ export class HistoryController {
     return this.historyService.create(createHistoryDto);
   }
 
-  @Get()
-  findAll() {
-    return this.historyService.findAll();
+  @Get('type/:type')
+  findByType(
+    @Param('type') type: string,
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+  ) {
+    return this.historyService.findByType(type, +page, +limit);
+  }
+
+  @Get('type/:type/date/:date')
+  findByTypeAndDate(
+    @Param('type') type: string,
+    @Param('date') date: string,
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+  ) {
+    return this.historyService.findByTypeAndDate(type, date, +page, +limit);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.historyService.findOne(+id);
+    return this.historyService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateHistoryDto: UpdateHistoryDto) {
-    return this.historyService.update(+id, updateHistoryDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.historyService.remove(+id);
-  }
 }

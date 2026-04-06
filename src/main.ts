@@ -3,10 +3,14 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { getConnectionToken } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  
+  // Use global validation pipes and filters
   app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   // Database verification
   const logger = new Logger('DatabaseVerification');
@@ -19,6 +23,6 @@ async function bootstrap() {
   }
 
   // Provide a fallback port just in case process.env.PORT is undefined
-  await app.listen(process.env.PORT ?? 3002);
+  await app.listen(process.env.PORT!);
 }
 bootstrap();
