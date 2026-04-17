@@ -7,6 +7,8 @@ import { LoggerMiddleware } from './logger.middleware';
 import { UserModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { HistoryModule } from './history/history.module';
+import { StatusModule } from './status/status.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { HistoryModule } from './history/history.module';
     UserModule,
     AuthModule,
     HistoryModule,
+    StatusModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -36,3 +36,34 @@ GET http://localhost:3000/history/type/temperature
 ### get history by type and date (paginated - standard YYYY-MM-DD structure)
 GET http://localhost:3000/history/type/temperature/date/2026-04-06?page=1&limit=5
 
+### update device status (online)
+POST http://localhost:3000/status/update
+Content-Type: application/json
+
+{
+  "device": "esp32-living-room",
+  "status": "online"
+}
+
+### update device status (offline)
+POST http://localhost:3000/status/update
+Content-Type: application/json
+
+{
+  "device": "esp32-living-room",
+  "status": "offline"
+}
+
+### create notification
+POST http://localhost:3000/notifications
+Content-Type: application/json
+
+{
+  "message": "Smoke detected in kitchen",
+  "type": "alert",
+  "isread": false
+}
+
+### get notifications (paginated, newest first)
+GET http://localhost:3000/notifications?page=1&limit=10
+
