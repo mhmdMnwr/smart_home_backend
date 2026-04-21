@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { HistoryModule } from './history/history.module';
 import { StatusModule } from './status/status.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { MqttModule } from './mqtt/mqtt.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { NotificationsModule } from './notifications/notifications.module';
     HistoryModule,
     StatusModule,
     NotificationsModule,
+    // MqttModule,
   ],
   controllers: [AppController],
   providers: [AppService],

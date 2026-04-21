@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
   "email": "test@example.com",
-  "password": "mysecretpassword"
+  "password": "newsecretpassword"
 }
 
 ### reset password
@@ -67,3 +67,62 @@ Content-Type: application/json
 ### get notifications (paginated, newest first)
 GET http://localhost:3000/notifications?page=1&limit=10
 
+
+### test mqtt publish
+post http://localhost:3000/mqtt/publish
+Content-Type: application/json
+
+### set lamp 1 (topic smartHome/devices/lamp/lamp1/set)
+POST http://localhost:3000/mqtt/setLed/lamp1
+Content-Type: application/json
+
+{
+  "set": "on"
+}
+
+### set lamp 2 (topic smartHome/devices/lamp/lamp2/set)
+POST http://localhost:3000/mqtt/setLed/lamp2
+Content-Type: application/json
+
+{
+  "set": "on"
+}
+
+### set fan 1 (topic smartHome/devices/fan/fan1/set)
+POST http://localhost:3000/mqtt/setfan/fan1
+Content-Type: application/json
+
+{
+  "set": "off"
+}
+
+### set fan 2 (topic smartHome/devices/fan/fan2/set)
+POST http://localhost:3000/mqtt/setfan/fan1
+Content-Type: application/json
+
+{
+  "set": "off"
+}
+
+### open door (topic smartHome/devices/door/opendoor)
+POST http://localhost:3000/mqtt/opendoor
+Content-Type: application/json
+
+{
+  "password": "your-secret-password"
+}
+
+### open door (topic smartHome/devices/door/opendoor)
+POST http://localhost:3000/mqtt/setAlarm
+Content-Type: application/json
+
+{
+ "set": "off"
+}
+
+
+
+
+### sub to a topic
+post http://localhost:3000/mqtt/subscribe
+Content-Type: application/json

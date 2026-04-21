@@ -3,7 +3,7 @@ import { AppModule } from './src/app.module';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
-import { User } from './src/users/schemas/user.schema';
+import { User, UserRole } from './src/users/schemas/user.schema';
 
 async function bootstrap() {
   // 1. Create a lightweight NestJS application context (no HTTP server)
@@ -32,6 +32,7 @@ async function bootstrap() {
       name,
       email,
       password: hashedPassword,
+      role: UserRole.USER,
     });
     console.log(`✅ User ${email} successfully created!`);
   }

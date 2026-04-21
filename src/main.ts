@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { getConnectionToken } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { ResponseTransformInterceptor } from './common/interceptors/response-transform.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,6 +12,7 @@ async function bootstrap() {
   // Use global validation pipes and filters
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalInterceptors(new ResponseTransformInterceptor());
 
   // Database verification
   const logger = new Logger('DatabaseVerification');
