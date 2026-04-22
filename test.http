@@ -1,11 +1,16 @@
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzdWIiOiI2OWQyYjg3M2Q0NjhmMjE3MmNlODA0ZjMiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzY4MDAwMDMsImV4cCI6MTc3NzQwNDgwM30.p0Ko8yvhjAFXxsN2o-aYXIywC-sTm1kGTvWGpAzFMRQ
 ### login
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
   "email": "test@example.com",
-  "password": "newsecretpassword"
+  "password": "newsecretpassword2"
 }
+
+### get me (requires access token)
+GET http://localhost:3000/users/me
+Authorization: Bearer {{accessToken}}
 
 ### reset password
 POST http://localhost:3000/auth/reset-password
@@ -53,6 +58,12 @@ Content-Type: application/json
   "device": "esp32-living-room",
   "status": "offline"
 }
+
+### get device status by device name
+GET http://localhost:3000/status/device/esp32-living-room
+
+### get statuses for lamp1, lamp2, fan1, fan2
+GET http://localhost:3000/status/devices
 
 ### create notification
 POST http://localhost:3000/notifications

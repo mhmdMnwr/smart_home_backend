@@ -53,6 +53,16 @@ export class UsersService {
     return this.updateUserById(userId, updateUserDto);
   }
 
+  async getMe(userId: string) {
+    const user = await this.userModel.findById(userId).exec();
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return this.excludePassword(user);
+  }
+
   async updateUserById(userId: string, updateUserDto: UpdateUserDto) {
     const updatePayload: Partial<User> & { password?: string } = {};
 

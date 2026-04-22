@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Post,
@@ -22,6 +23,11 @@ type JwtRequest = Request & {
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Get('me')
+  getMe(@Req() req: JwtRequest) {
+    return this.usersService.getMe(req.user.sub);
+  }
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {

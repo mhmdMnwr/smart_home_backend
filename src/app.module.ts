@@ -26,7 +26,7 @@ import { MqttModule } from './mqtt/mqtt.module';
     HistoryModule,
     StatusModule,
     NotificationsModule,
-    // MqttModule,
+    MqttModule,
   ],
   controllers: [AppController],
   providers: [AppService],

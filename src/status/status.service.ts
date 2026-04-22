@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
@@ -13,6 +17,47 @@ export class StatusService {
     @InjectModel(DeviceStatus.name)
     private readonly deviceStatusModel: Model<DeviceStatusDocument>,
   ) {}
+
+  async getDevicesStatus() {
+    const trackedDevices = ['lamp1', 'lamp2', 'fan1', 'fan2'];
+
+    const statuses = await this.deviceStatusModel
+      .find({ device: { $in: trackedDevices } })
+      .exec();
+
+    const statusMap = new Map(statuses.map((item) => [item.device, item]));
+
+    return {
+      message: 'Devices status retrieved successfully',
+      data: {
+        lamp1: this.formatDeviceStatus(statusMap.get('lamp1')),
+        lamp2: this.formatDeviceStatus(statusMap.get('lamp2')),
+        fan1: this.formatDeviceStatus(statusMap.get('fan1')),
+        fan2: this.formatDeviceStatus(statusMap.get('fan2')),
+      },
+    };
+  }
+
+  async getStatusByDevice(device: string) {
+    const targetDevice = device.trim();
+
+    const deviceStatus = await this.deviceStatusModel
+      .findOne({ device: targetDevice })
+      .exec();
+
+    if (!deviceStatus) {
+      throw new NotFoundException(`Device not found: ${targetDevice}`);
+    }
+
+    return {
+      message: 'Device status retrieved successfully',
+      data: {
+        device: deviceStatus.device,
+        status: deviceStatus.status,
+        updatedAt: deviceStatus.updatedAt,
+      },
+    };
+  }
 
   async updateStatus(updateDeviceStatusDto: UpdateDeviceStatusDto) {
     try {
@@ -51,5 +96,19 @@ export class StatusService {
         error.message || 'An error occurred while updating device status',
       );
     }
+  }
+
+  private formatDeviceStatus(deviceStatus?: DeviceStatusDocument) {
+    if (!deviceStatus) {
+      return {
+        status: null,
+        updatedAt: null,
+      };
+    }
+
+    return {
+      status: deviceStatus.status,
+      updatedAt: deviceStatus.updatedAt,
+    };
   }
 }

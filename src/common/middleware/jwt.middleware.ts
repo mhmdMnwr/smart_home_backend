@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 export class JwtMiddleware implements NestMiddleware {
   constructor(private readonly jwtService: JwtService) {}
 
-  use(req: Request, res: Response, next: NextFunction) {
+  use(req: Request, _res: Response, next: NextFunction) {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new UnauthorizedException('Missing or invalid authorization header');
@@ -14,9 +14,7 @@ export class JwtMiddleware implements NestMiddleware {
 
     const token = authHeader.split(' ')[1];
     try {
-      const decoded = this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET || 'fallback_secret', 
-      });
+      const decoded = this.jwtService.verify(token);
       // Attach the decoded payload (user/admin info) to the request object
       req['user'] = decoded;
       next();
