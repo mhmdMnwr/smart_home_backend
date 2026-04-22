@@ -78,6 +78,51 @@ npm run test        # unit tests
 - User role is included in JWT payload
 - Role cannot be updated through update user DTO
 
+## History API (User)
+
+- Base URL: `http://localhost:3000/history`
+- Main route for frontend: `GET /history?type=temperature&page=1&limit=10`
+- Required query parameter: `type`
+- Optional query parameters:
+  - `page` (default `1`)
+  - `limit` (default `10`)
+- Pagination is always sorted by `createdAt` descending (newest first).
+
+Each history item returned to the frontend has this shape:
+
+```json
+{
+  "value": 22.5,
+  "createdAt": "2026-04-22T10:00:00.000Z"
+}
+```
+
+Paginated response data shape:
+
+```json
+{
+  "statusCode": 200,
+  "sucess": true,
+  "data": {
+    "data": [
+      {
+        "value": 22.5,
+        "createdAt": "2026-04-22T10:00:00.000Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  }
+}
+```
+
+Compatibility routes:
+
+- `GET /history/type/:type?page=1&limit=10`
+- `GET /history/type/:type/date/:date?page=1&limit=10` where date format is `YYYY-MM-DD`
+
 ## MQTT API
 
 - Base URL: `http://localhost:3000/mqtt`

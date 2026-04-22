@@ -35,8 +35,11 @@ Content-Type: application/json
 ### get history by id
 GET http://localhost:3000/history/PLACEHOLDER_ID
 
-### get history by type (paginated)
-GET http://localhost:3000/history/type/temperature
+### get user history by type (paginated, newest first)
+GET http://localhost:3000/history?type=temperature&page=1&limit=5
+
+### get history by type (legacy route, paginated, newest first)
+GET http://localhost:3000/history/type/temperature?page=1&limit=5
 
 ### get history by type and date (paginated - standard YYYY-MM-DD structure)
 GET http://localhost:3000/history/type/temperature/date/2026-04-06?page=1&limit=5

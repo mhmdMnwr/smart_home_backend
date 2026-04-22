@@ -19,7 +19,7 @@ export class StatusService {
   ) {}
 
   async getDevicesStatus() {
-    const trackedDevices = ['lamp1', 'lamp2', 'fan1', 'fan2'];
+    const trackedDevices = ['lamp1', 'lamp2', 'fan1', 'fan2','alarm'];
 
     const statuses = await this.deviceStatusModel
       .find({ device: { $in: trackedDevices } })
@@ -34,6 +34,7 @@ export class StatusService {
         lamp2: this.formatDeviceStatus(statusMap.get('lamp2')),
         fan1: this.formatDeviceStatus(statusMap.get('fan1')),
         fan2: this.formatDeviceStatus(statusMap.get('fan2')),
+        alarm: this.formatDeviceStatus(statusMap.get('alarm')),
       },
     };
   }

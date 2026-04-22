@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from 'mongoose';
 import { History, HistoryDocument } from './schemas/history.schema';
@@ -30,46 +34,107 @@ constructor(
 
   async findByType(type: string, page: number, limit: number) {
     try {
-      const skip = (page - 1) * limit;
+      const normalizedType = this.normalizeType(type);
+      const normalizedPage = this.normalizePage(page);
+      const normalizedLimit = this.normalizeLimit(limit);
+      const skip = (normalizedPage - 1) * normalizedLimit;
+      const query = { type: normalizedType };
+
       const [data, total] = await Promise.all([
-        this.historyModel.find({ type }).skip(skip).limit(limit).exec(),
-        this.historyModel.countDocuments({ type }).exec()
+        this.historyModel
+          .find(query)
+          .sort({ createdAt: -1, _id: -1 })
+          .skip(skip)
+          .limit(normalizedLimit)
+          .select({ _id: 0, value: 1, createdAt: 1 })
+          .lean()
+          .exec(),
+        this.historyModel.countDocuments(query).exec(),
       ]);
+
       return {
-        data,
+        data: data.map((item) => ({
+          value: item.value,
+          createdAt: item.createdAt,
+        })),
         total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit)
+        page: normalizedPage,
+        limit: normalizedLimit,
+        totalPages: Math.ceil(total / normalizedLimit),
       };
     } catch (error: any) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
       throw new InternalServerErrorException('Error retrieving history by type');
     }
   }
 
   async findByTypeAndDate(type: string, date: string, page: number, limit: number) {
     try {
-      const skip = (page - 1) * limit;
+      const normalizedType = this.normalizeType(type);
+      const normalizedPage = this.normalizePage(page);
+      const normalizedLimit = this.normalizeLimit(limit);
+      const skip = (normalizedPage - 1) * normalizedLimit;
+
       const start = new Date(date);
+      if (Number.isNaN(start.getTime())) {
+        throw new BadRequestException('Invalid date format. Use YYYY-MM-DD');
+      }
+
       start.setUTCHours(0, 0, 0, 0);
       const end = new Date(date);
       end.setUTCHours(23, 59, 59, 999);
 
-      const query = { type, createdAt: { $gte: start, $lte: end } };
+      const query = { type: normalizedType, createdAt: { $gte: start, $lte: end } };
 
       const [data, total] = await Promise.all([
-        this.historyModel.find(query).skip(skip).limit(limit).exec(),
-        this.historyModel.countDocuments(query).exec()
+        this.historyModel
+          .find(query)
+          .sort({ createdAt: -1, _id: -1 })
+          .skip(skip)
+          .limit(normalizedLimit)
+          .select({ _id: 0, value: 1, createdAt: 1 })
+          .lean()
+          .exec(),
+        this.historyModel.countDocuments(query).exec(),
       ]);
+
       return {
-        data,
+        data: data.map((item) => ({
+          value: item.value,
+          createdAt: item.createdAt,
+        })),
         total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit)
+        page: normalizedPage,
+        limit: normalizedLimit,
+        totalPages: Math.ceil(total / normalizedLimit),
       };
     } catch (error: any) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
       throw new InternalServerErrorException('Error retrieving history by type and date');
     }
+  }
+
+  private normalizeType(type: string): string {
+    const normalizedType = type?.trim();
+
+    if (!normalizedType) {
+      throw new BadRequestException('Query parameter "type" is required');
+    }
+
+    return normalizedType;
+  }
+
+  private normalizePage(page: number): number {
+    return Number.isFinite(page) && page > 0 ? page : 1;
+  }
+
+  private normalizeLimit(limit: number): number {
+    return Number.isFinite(limit) && limit > 0 ? limit : 10;
   }
 }
