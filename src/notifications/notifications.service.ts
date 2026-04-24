@@ -75,4 +75,55 @@ export class NotificationsService {
       );
     }
   }
+
+  async markAsRead(id: string) {
+    try {
+      const updatedNotification = await this.notificationModel
+        .findByIdAndUpdate(
+          id,
+          { isread: true },
+          { new: true, runValidators: true },
+        )
+        .exec();
+
+      if (!updatedNotification) {
+        return {
+          message: 'Notification not found',
+        };
+      }
+
+      return {
+        message: 'Notification marked as read',
+      };
+    } catch (error: any) {
+      throw new InternalServerErrorException(
+        error.message || 'An error occurred while marking notification as read',
+      );
+    }
+  }
+
+  async markAllAsRead() {
+    try {
+      await this.notificationModel.updateMany({ isread: false }, { isread: true }).exec();
+
+      return {
+        message: 'All notifications marked as read',
+      };
+    } catch (error: any) {
+      throw new InternalServerErrorException(
+        error.message || 'An error occurred while marking all notifications as read',
+      );
+    }
+  }
+
+  async newNofificationsNumber(){
+    try {
+      const count = await this.notificationModel.countDocuments({ isread: false }).exec();
+      return { newNotifications: count };
+    } catch (error: any) {
+      throw new InternalServerErrorException(
+        error.message || 'An error occurred while counting new notifications',
+      );
+    }
+  }
 }

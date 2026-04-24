@@ -13,16 +13,17 @@ import { UpdateDeviceStatusDto } from './dto/update-device-status.dto';
 
 @Injectable()
 export class StatusService {
+  private readonly trackedDevices = ['lamp1', 'lamp2', 'fan1', 'fan2', 'alarm'];
+  private readonly trackedSensors = ['dht11', 'mq2'];
+
   constructor(
     @InjectModel(DeviceStatus.name)
     private readonly deviceStatusModel: Model<DeviceStatusDocument>,
   ) {}
 
   async getDevicesStatus() {
-    const trackedDevices = ['lamp1', 'lamp2', 'fan1', 'fan2','alarm'];
-
     const statuses = await this.deviceStatusModel
-      .find({ device: { $in: trackedDevices } })
+      .find({ device: { $in: this.trackedDevices } })
       .exec();
 
     const statusMap = new Map(statuses.map((item) => [item.device, item]));
@@ -56,6 +57,54 @@ export class StatusService {
         device: deviceStatus.device,
         status: deviceStatus.status,
         updatedAt: deviceStatus.updatedAt,
+      },
+    };
+  }
+
+  async getSensorsStatus() {
+    const statuses = await this.deviceStatusModel
+      .find({ device: { $in: this.trackedSensors } })
+      .exec();
+
+    const statusMap = new Map(statuses.map((item) => [item.device, item]));
+
+    return {
+      message: 'Sensors status retrieved successfully',
+      data: {
+        dht11: this.formatDeviceStatus(statusMap.get('dht11')),
+        mq2: this.formatDeviceStatus(statusMap.get('mq2')),
+      },
+    };
+  }
+
+  async getStatusBySensor(sensor: string) {
+    const targetSensor = sensor.trim();
+
+    if (!this.trackedSensors.includes(targetSensor)) {
+      throw new NotFoundException(`Sensor not found: ${targetSensor}`);
+    }
+
+    const sensorStatus = await this.deviceStatusModel
+      .findOne({ device: targetSensor })
+      .exec();
+
+    if (!sensorStatus) {
+      return {
+        message: 'Sensor status retrieved successfully',
+        data: {
+          sensor: targetSensor,
+          status: null,
+          updatedAt: null,
+        },
+      };
+    }
+
+    return {
+      message: 'Sensor status retrieved successfully',
+      data: {
+        sensor: sensorStatus.device,
+        status: sensorStatus.status,
+        updatedAt: sensorStatus.updatedAt,
       },
     };
   }

@@ -16,6 +16,16 @@ export class StatusController {
     return this.statusService.getStatusByDevice(device);
   }
 
+  @Get('sensors')
+  getSensorsStatus() {
+    return this.statusService.getSensorsStatus();
+  }
+
+  @Get('sensor/:sensor')
+  getBySensor(@Param('sensor') sensor: string) {
+    return this.statusService.getStatusBySensor(sensor);
+  }
+
   @Post('update')
   update(@Body() updateDeviceStatusDto: UpdateDeviceStatusDto) {
     return this.statusService.updateStatus(updateDeviceStatusDto);

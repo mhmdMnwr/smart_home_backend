@@ -16,6 +16,10 @@ export class UsersService {
     @InjectModel(User.name) private userModel: Model<UserDocument>,
   ) {}
 
+  async getAllUsers(): Promise<UserDocument[]> {
+    return this.userModel.find().exec();
+  }
+
   async findByEmail(email: string): Promise<UserDocument | null> {
     return this.userModel.findOne({ email }).exec();
   }
@@ -129,5 +133,15 @@ export class UsersService {
       typeof (error as { code?: unknown }).code === 'number' &&
       (error as { code: number }).code === 11000
     );
+  }
+
+  async deleteUserById(userId: string) {
+    const deletedUser = await this.userModel.findByIdAndDelete(userId).exec();
+
+    if (!deletedUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    return this.excludePassword(deletedUser);
   }
 }

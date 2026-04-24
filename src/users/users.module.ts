@@ -36,6 +36,7 @@ export class UserModule implements NestModule {
     consumer.apply(AdminMiddleware).forRoutes(
       { path: 'users', method: RequestMethod.POST },
       { path: 'users/:id', method: RequestMethod.PATCH },
+      { path: 'users/:id', method: RequestMethod.DELETE },
     );
   }
 }

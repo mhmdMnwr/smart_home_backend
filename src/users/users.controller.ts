@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   Req,
+  Delete
 } from '@nestjs/common';
 import { Request } from 'express';
 import { CreateUserDto } from './dto/create_dto';
@@ -29,6 +30,13 @@ export class UsersController {
     return this.usersService.getMe(req.user.sub);
   }
 
+  @Get()
+  getAllUsers() {
+    return this.usersService.getAllUsers();
+  }
+
+
+
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createUser(createUserDto);
@@ -45,5 +53,10 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.usersService.updateUserById(id, updateUserDto);
+  }
+
+  @Delete(':id')
+  deleteByAdmin(@Param('id') id: string) {
+    return this.usersService.deleteUserById(id);
   }
 }
