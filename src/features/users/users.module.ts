@@ -7,8 +7,8 @@ import {
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
-import { AdminMiddleware } from '../common/middleware/admin.middleware';
-import { JwtMiddleware } from '../common/middleware/jwt.middleware';
+import { AdminMiddleware } from '../../common/middleware/admin.middleware';
+import { JwtMiddleware } from '../../common/middleware/jwt.middleware';
 import { UsersController } from './users.controller';
 import { User, UserSchema } from './schemas/user.schema';
 import { UsersService } from './users.service';

@@ -74,7 +74,7 @@ Content-Type: application/json
 
 {
   "message": "Smoke detected in kitchen",
-  "type": "alert",
+  "type": "message",
   "isread": false
 }
 
@@ -140,3 +140,12 @@ Content-Type: application/json
 ### sub to a topic
 post http://localhost:3000/mqtt/subscribe
 Content-Type: application/json
+
+### create log
+POST http://localhost:3000/logs
+Content-Type: application/json
+
+{
+  "device": "light-sensor",
+  "message": "Light level dropped below threshold",
+}

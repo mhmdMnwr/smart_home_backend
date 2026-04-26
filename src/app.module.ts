@@ -4,13 +4,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { LoggerMiddleware } from './logger.middleware';
-import { UserModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { HistoryModule } from './history/history.module';
-import { StatusModule } from './status/status.module';
-import { NotificationsModule } from './notifications/notifications.module';
-import { MqttModule } from './mqtt/mqtt.module';
-
+import { UserModule } from './features/users/users.module';
+import { AuthModule } from './features/auth/auth.module';
+import { HistoryModule } from './features/history/history.module';
+import { StatusModule } from './features/status/status.module';
+import { NotificationsModule } from './features/notifications/notifications.module';
+import { MqttModule } from './features/mqtt/mqtt.module';
+import { LogModule } from './features/logs/log.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -27,6 +27,7 @@ import { MqttModule } from './mqtt/mqtt.module';
     StatusModule,
     NotificationsModule,
     MqttModule,
+    LogModule
   ],
   controllers: [AppController],
   providers: [AppService],
