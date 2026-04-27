@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { CreateHistoryDto } from './dto/create-history.dto';
-import { UpdateHistoryDto } from './dto/update-history.dto';
 
 @Controller('history')
 export class HistoryController {
@@ -12,8 +11,17 @@ export class HistoryController {
     return this.historyService.create(createHistoryDto);
   }
 
+  @Get()
+  findUserHistoryByType(
+    @Query('type') type: string,
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+  ) {
+    return this.historyService.findByType(type, +page, +limit);
+  }
+
   @Get('type/:type')
-  findByType(
+  findByTypeLegacyRoute(
     @Param('type') type: string,
     @Query('page') page: string = '1',
     @Query('limit') limit: string = '10',

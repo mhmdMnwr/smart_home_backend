@@ -27,7 +27,7 @@ export class MqttService implements OnModuleDestroy {
   constructor(private readonly configService: ConfigService) {
     const brokerUrl =
       this.configService.get<string>('MQTT_BROKER_URL') ??
-      'mqtt://localhost:1883';
+      'mqtt://10.33.137.110:1883';
 
     const options: IClientOptions = {
       reconnectPeriod: 1000,

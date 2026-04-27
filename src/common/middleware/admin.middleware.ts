@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
-import { UserRole } from '../../users/schemas/user.schema';
+import { UserRole } from '../../features/users/schemas/user.schema';
 
 type RequestWithUser = Request & {
   user?: {

@@ -65,10 +65,142 @@ npm run test        # unit tests
 }
 ```
 
+- Get current user endpoint:
+  - `GET /users/me`
+  - header: `Authorization: Bearer <access_token>`
+
 ## User Access Rules
 
+- `GET /users/me`: authenticated user can read own profile
 - `PATCH /users/me`: authenticated user updates own profile
 - `POST /users`: admin only
 - `PATCH /users/:id`: admin only
 - User role is included in JWT payload
 - Role cannot be updated through update user DTO
+
+## History API (User)
+
+- Base URL: `http://localhost:3000/history`
+- Main route for frontend: `GET /history?type=temperature&page=1&limit=10`
+- Required query parameter: `type`
+- Optional query parameters:
+  - `page` (default `1`)
+  - `limit` (default `10`)
+- Pagination is always sorted by `createdAt` descending (newest first).
+
+Each history item returned to the frontend has this shape:
+
+```json
+{
+  "value": 22.5,
+  "createdAt": "2026-04-22T10:00:00.000Z"
+}
+```
+
+Paginated response data shape:
+
+```json
+{
+  "statusCode": 200,
+  "sucess": true,
+  "data": {
+    "data": [
+      {
+        "value": 22.5,
+        "createdAt": "2026-04-22T10:00:00.000Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 1
+  }
+}
+```
+
+Compatibility routes:
+
+- `GET /history/type/:type?page=1&limit=10`
+- `GET /history/type/:type/date/:date?page=1&limit=10` where date format is `YYYY-MM-DD`
+
+## MQTT API
+
+- Base URL: `http://localhost:3000/mqtt`
+- All MQTT routes use `POST`
+- Content-Type: `application/json`
+- Current implementation has no auth middleware on MQTT routes
+
+### Set Command Payload
+
+Use this payload for lamp/fan/alarm routes:
+
+```json
+{
+  "set": "on"
+}
+```
+
+Allowed values for `set`: `on`, `off`.
+
+### Endpoints
+
+- `POST /mqtt/setLed/lamp1`
+- `POST /mqtt/setLed/lamp2`
+- `POST /mqtt/setfan/fan1`
+- `POST /mqtt/setfan/fan2`
+- `POST /mqtt/setAlarm`
+
+Body for the routes above:
+
+```json
+{
+  "set": "off"
+}
+```
+
+- `POST /mqtt/opendoor`
+
+```json
+{
+  "password": "your-secret-password"
+}
+```
+
+- `POST /mqtt/changePassword`
+
+```json
+{
+  "oldPassword": "old-pass",
+  "newPassword": "new-pass"
+}
+```
+
+- `POST /mqtt/setTempTreshold`
+
+```json
+{
+  "value": 28
+}
+```
+
+### MQTT Response Shape
+
+Responses are wrapped by the global interceptor:
+
+```json
+{
+  "statusCode": 200,
+  "sucess": true,
+  "data": null
+}
+```
+
+Validation or publish errors follow:
+
+```json
+{
+  "statusCode": 400,
+  "sucess": false,
+  "data": null
+}
+```

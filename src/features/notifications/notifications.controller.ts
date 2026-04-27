@@ -18,4 +18,21 @@ export class NotificationsController {
   ) {
     return this.notificationsService.findAll(+page, +limit);
   }
+
+  @Get('unread-number')
+  newNotificationsNumber() {
+    return this.notificationsService.newNofificationsNumber();
+  }
+
+  @Post('markAsRead')
+  markAsRead(@Body('id') id: string) {
+    return this.notificationsService.markAsRead(id);
+  }
+
+  @Post('markAllAsRead')
+  markAllAsRead() {
+    return this.notificationsService.markAllAsRead();
+  }
+
+
 }

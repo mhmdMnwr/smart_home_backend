@@ -16,6 +16,10 @@ export class History {
     @Prop({ required:true })
     value!: number;
 
+    createdAt?: Date;
+
+    updatedAt?: Date;
+
     
 
 }
