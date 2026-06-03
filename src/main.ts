@@ -9,6 +9,9 @@ import { ResponseTransformInterceptor } from './common/interceptors/response-tra
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
+  // Enable CORS
+  app.enableCors();
+
   // Use global validation pipes and filters
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new AllExceptionsFilter());
