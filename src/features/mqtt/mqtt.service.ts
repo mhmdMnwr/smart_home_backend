@@ -13,9 +13,8 @@ const SMART_HOME_TOPICS = {
   lamp2Set: 'smartHome/devices/lamp/lamp2/set',
   fan1Set: 'smartHome/devices/fan/fan1/set',
   fan2Set: 'smartHome/devices/fan/fan2/set',
-  openDoor: 'smartHome/devices/door/opendoor',
+  setDoor: 'smartHome/devices/door/set',
   setAlarm: 'smartHome/devices/alarm/set',
-  changePassword: 'smartHome/devices/door/changePassword',
   TempTreshOld: 'smartHome/devices/dht11/temperature/set'
 } as const;
 
@@ -45,7 +44,7 @@ export class MqttService implements OnModuleDestroy {
       options.password = password;
     }
 
-    
+
 
     this.client = connect(brokerUrl, options);
 
@@ -60,6 +59,11 @@ export class MqttService implements OnModuleDestroy {
 
   onModuleDestroy() {
     this.client.end(true);
+  }
+
+  /** Expose the underlying MQTT client for topic subscriptions (used by SSE). */
+  getClient(): MqttClient {
+    return this.client;
   }
 
   async setLamp1(set: SetCommand) {
@@ -94,19 +98,11 @@ export class MqttService implements OnModuleDestroy {
     );
   }
 
-  async changePassword(oldPassword: string, newPassword: string) {
-  return this.publishToTopic(
-    SMART_HOME_TOPICS.changePassword,
-    { oldPassword, newPassword },
-    'Password change command published',
-  );
-  }
-
-  async openDoor(password: string) {
+  async setDoor(set: SetCommand) {
     return this.publishToTopic(
-      SMART_HOME_TOPICS.openDoor,
-      { password },
-      'Door open command published',
+      SMART_HOME_TOPICS.setDoor,
+      { set },
+      'Door lock command published',
     );
   }
 

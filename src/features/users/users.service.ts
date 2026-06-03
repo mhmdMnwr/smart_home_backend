@@ -14,7 +14,7 @@ import { User, UserDocument, UserRole } from './schemas/user.schema';
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
-  ) {}
+  ) { }
 
   async getAllUsers(): Promise<UserDocument[]> {
     return this.userModel.find().exec();
@@ -143,5 +143,45 @@ export class UsersService {
     }
 
     return this.excludePassword(deletedUser);
+  }
+
+  async verifyTag(cardTag: string) {
+    if (!cardTag) {
+      return { status: 'failed', message: 'Tag not recognized' };
+    }
+
+    const user = await this.userModel.findOne({ cardTag }).exec();
+
+    if (!user) {
+      return { status: 'failed', message: 'Tag not recognized' };
+    }
+
+    return {
+      status: 'success',
+      message: 'Tag verified',
+      user: this.excludePassword(user),
+    };
+  }
+
+  async assignTag(userId: string, cardTag: string) {
+    // Check if the tag is already assigned to another user
+    const existingHolder = await this.userModel.findOne({ cardTag }).exec();
+    if (existingHolder && existingHolder._id.toString() !== userId) {
+      throw new ConflictException('This tag is already assigned to another user');
+    }
+
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(userId, { cardTag }, { new: true, runValidators: true })
+      .exec();
+
+    if (!updatedUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    return {
+      status: 'success',
+      message: 'Tag assigned',
+      user: this.excludePassword(updatedUser),
+    };
   }
 }

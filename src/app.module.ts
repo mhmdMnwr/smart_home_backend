@@ -10,7 +10,8 @@ import { HistoryModule } from './features/history/history.module';
 import { StatusModule } from './features/status/status.module';
 import { NotificationsModule } from './features/notifications/notifications.module';
 import { MqttModule } from './features/mqtt/mqtt.module';
-// import { LogModule } from './features/logs/log.module';
+import { SseModule } from './features/sse/sse.module';
+//import { LogModule } from './features/logs/log.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -27,7 +28,8 @@ import { MqttModule } from './features/mqtt/mqtt.module';
     StatusModule,
     NotificationsModule,
     MqttModule,
-    // LogModule
+    SseModule,
+    //LogModule
   ],
   controllers: [AppController],
   providers: [AppService],

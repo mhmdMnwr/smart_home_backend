@@ -147,5 +147,19 @@ Content-Type: application/json
 
 {
   "device": "light-sensor",
-  "message": "Light level dropped below threshold",
+  "message": "Light level dropped below threshold"
 }
+
+### ─── SSE Streams ─────────────────────────────────────────────────
+
+### SSE: actuators (lamp1, lamp2, fan1, fan2, door, alarm)
+GET http://localhost:3000/sse/actuators
+Accept: text/event-stream
+
+### SSE: sensors (temperature, humidity, gas, fire)
+GET http://localhost:3000/sse/sensors
+Accept: text/event-stream
+
+### SSE: weather (water, light, temperature, humidity)
+GET http://localhost:3000/sse/weather
+Accept: text/event-stream

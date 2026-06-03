@@ -2,13 +2,16 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
   Req,
-  Delete
+  Delete,
+  Query,
 } from '@nestjs/common';
 import { Request } from 'express';
+import { AssignTagDto } from './dto/assign-tag.dto';
 import { CreateUserDto } from './dto/create_dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
@@ -35,7 +38,16 @@ export class UsersController {
     return this.usersService.getAllUsers();
   }
 
+  @Post('verify-tag')
+  @HttpCode(200)
+  verifyTag(@Body('cardTag') cardTag: string) {
+    return this.usersService.verifyTag(cardTag);
+  }
 
+  @Post('assign-tag')
+  assignTag(@Body() assignTagDto: AssignTagDto) {
+    return this.usersService.assignTag(assignTagDto.userId, assignTagDto.cardTag);
+  }
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {

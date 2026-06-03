@@ -13,7 +13,7 @@ import { UpdateDeviceStatusDto } from './dto/update-device-status.dto';
 
 @Injectable()
 export class StatusService {
-  private readonly trackedDevices = ['lamp1', 'lamp2', 'fan1', 'fan2', 'alarm'];
+  private readonly trackedDevices = ['lamp1', 'lamp2', 'fan1', 'fan2', 'alarm', 'door'];
   private readonly trackedSensors = ['dht11', 'mq2'];
 
   constructor(
@@ -36,6 +36,7 @@ export class StatusService {
         fan1: this.formatDeviceStatus(statusMap.get('fan1')),
         fan2: this.formatDeviceStatus(statusMap.get('fan2')),
         alarm: this.formatDeviceStatus(statusMap.get('alarm')),
+        door: this.formatDeviceStatus(statusMap.get('door')),
       },
     };
   }

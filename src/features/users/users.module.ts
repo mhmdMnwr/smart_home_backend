@@ -31,10 +31,14 @@ import { UsersService } from './users.service';
 })
 export class UserModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JwtMiddleware).forRoutes(UsersController);
+    consumer
+      .apply(JwtMiddleware)
+      .exclude({ path: 'users/verify-tag', method: RequestMethod.POST })
+      .forRoutes(UsersController);
 
     consumer.apply(AdminMiddleware).forRoutes(
       { path: 'users', method: RequestMethod.POST },
+      { path: 'users/assign-tag', method: RequestMethod.POST },
       { path: 'users/:id', method: RequestMethod.PATCH },
       { path: 'users/:id', method: RequestMethod.DELETE },
     );
