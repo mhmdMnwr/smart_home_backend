@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../rssi_shit"
+		},
+		{
+			"path": "../smart_home_app"
+		},
+		{
+			"path": "../smart_home_cards_codes"
+		}
+	]
+}
