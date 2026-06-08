@@ -1,11 +1,10 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { MqttService } from './mqtt.service';
-import { OpenDoorDto } from './dto/open-door.dto';
 import { SetCommandDto } from './dto/set-command.dto';
 
 @Controller('mqtt')
 export class MqttController {
-  constructor(private readonly mqttService: MqttService) {}
+  constructor(private readonly mqttService: MqttService) { }
 
   @Post('setLed/lamp1')
   @HttpCode(200)
@@ -31,23 +30,14 @@ export class MqttController {
     return this.mqttService.setFan2(setCommandDto.set);
   }
 
-  @Post('opendoor')
+  @Post('setDoor')
   @HttpCode(200)
-  openDoor(@Body() openDoorDto: OpenDoorDto) {
-    return this.mqttService.openDoor(openDoorDto.password);
+  setDoor(@Body() setCommandDto: SetCommandDto) {
+    return this.mqttService.setDoor(setCommandDto.set);
   }
 
-  @Post('changePassword')
-  @HttpCode(200)
-  changePassword(
-    @Body('oldPassword') oldPassword: string,
-    @Body('newPassword') newPassword: string,
-  ) {
-    return this.mqttService.changePassword(oldPassword, newPassword);
-  }
 
-  
-@Post('setAlarm')
+  @Post('setAlarm')
   @HttpCode(200)
   setAlarm(@Body() setCommandDto: SetCommandDto) {
     return this.mqttService.setAlarm(setCommandDto.set);

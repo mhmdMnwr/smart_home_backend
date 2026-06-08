@@ -11,7 +11,7 @@ const ACTUATOR_TOPICS = [
   'smartHome/devices/lamp/lamp2/set',
   'smartHome/devices/fan/fan1/set',
   'smartHome/devices/fan/fan2/set',
-  'smartHome/devices/door/opendoor',
+  'smartHome/devices/door/set',
   'smartHome/devices/alarm/set',
 ] as const;
 
