@@ -15,6 +15,20 @@ const ACTUATOR_TOPICS = [
   'smartHome/devices/alarm/set',
 ] as const;
 
+const SENSOR_TOPICS = [
+  'smartHome/devices/dht11/temperature/state',
+  'smartHome/devices/dht11/humidity/state',
+  'smartHome/devices/mq2/gas/state',
+  'smartHome/devices/fireSensor/fire/state',
+] as const;
+
+const WEATHER_TOPICS = [
+  'smartHome/weather/water/state',
+  'smartHome/weather/light/state',
+  'smartHome/weather/temperature/state',
+  'smartHome/weather/humidity/state',
+] as const;
+
 /* ------------------------------------------------------------------ */
 /*  Message type emitted by each SSE stream                           */
 /* ------------------------------------------------------------------ */
@@ -45,15 +59,20 @@ export class SseService implements OnModuleInit {
   onModuleInit() {
     const client = this.mqttService.getClient();
 
-    // Only subscribe to actuator topics via MQTT.
-    // Sensors and weather are pushed via public methods below.
+    const allTopics = [
+      ...ACTUATOR_TOPICS,
+      ...SENSOR_TOPICS,
+      ...WEATHER_TOPICS,
+    ];
+
+    // Subscribe to every topic once the client is connected.
     const subscribe = () => {
-      client.subscribe(ACTUATOR_TOPICS as unknown as string[], { qos: 1 }, (err) => {
+      client.subscribe(allTopics as unknown as string[], { qos: 1 }, (err) => {
         if (err) {
           this.logger.error(`SSE subscription error: ${err.message}`);
         } else {
           this.logger.log(
-            `SSE subscribed to ${ACTUATOR_TOPICS.length} actuator topics`,
+            `SSE subscribed to ${allTopics.length} topics`,
           );
         }
       });
@@ -66,41 +85,22 @@ export class SseService implements OnModuleInit {
       client.on('connect', subscribe);
     }
 
-    // Route incoming MQTT messages to actuators only.
+    // Route incoming messages to the correct Subject.
     client.on('message', (topic: string, payload: Buffer) => {
+      const msg: SseMessage = {
+        topic,
+        payload: this.safeParse(payload),
+        timestamp: new Date().toISOString(),
+      };
+
       if ((ACTUATOR_TOPICS as readonly string[]).includes(topic)) {
-        const msg: SseMessage = {
-          topic,
-          payload: this.safeParse(payload),
-          timestamp: new Date().toISOString(),
-        };
         this.actuators$.next(msg);
+      } else if ((SENSOR_TOPICS as readonly string[]).includes(topic)) {
+        this.sensors$.next(msg);
+      } else if ((WEATHER_TOPICS as readonly string[]).includes(topic)) {
+        this.weather$.next(msg);
       }
     });
-  }
-
-  /* ---- public push methods for sensors & weather ----------------- */
-
-  /** Push a sensor message into the SSE stream. */
-  pushSensorMessage(topic: string, payload: unknown): void {
-    const msg: SseMessage = {
-      topic,
-      payload,
-      timestamp: new Date().toISOString(),
-    };
-    this.sensors$.next(msg);
-    this.logger.debug(`Sensor SSE pushed: ${topic}`);
-  }
-
-  /** Push a weather message into the SSE stream. */
-  pushWeatherMessage(topic: string, payload: unknown): void {
-    const msg: SseMessage = {
-      topic,
-      payload,
-      timestamp: new Date().toISOString(),
-    };
-    this.weather$.next(msg);
-    this.logger.debug(`Weather SSE pushed: ${topic}`);
   }
 
   /* ---- public observables for the controller --------------------- */

@@ -62,11 +62,6 @@ export class MqttService implements OnModuleDestroy {
     this.client.end(true);
   }
 
-  /** Expose the raw client for direct subscription (e.g. SSE). */
-  getClient(): MqttClient {
-    return this.client;
-  }
-
   async setLamp1(set: SetCommand) {
     return this.publishToTopic(
       SMART_HOME_TOPICS.lamp1Set,
