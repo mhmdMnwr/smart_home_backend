@@ -45,7 +45,7 @@ export class MqttService implements OnModuleDestroy {
       options.password = password;
     }
 
-    
+
 
     this.client = connect(brokerUrl, options);
 
@@ -62,7 +62,7 @@ export class MqttService implements OnModuleDestroy {
     this.client.end(true);
   }
 
-  /** Expose the underlying MQTT client for topic subscriptions (used by SSE). */
+  /** Expose the raw client for direct subscription (e.g. SSE). */
   getClient(): MqttClient {
     return this.client;
   }
@@ -100,11 +100,11 @@ export class MqttService implements OnModuleDestroy {
   }
 
   async changePassword(oldPassword: string, newPassword: string) {
-  return this.publishToTopic(
-    SMART_HOME_TOPICS.changePassword,
-    { oldPassword, newPassword },
-    'Password change command published',
-  );
+    return this.publishToTopic(
+      SMART_HOME_TOPICS.changePassword,
+      { oldPassword, newPassword },
+      'Password change command published',
+    );
   }
 
   async openDoor(password: string) {
